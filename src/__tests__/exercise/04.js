@@ -4,7 +4,13 @@
 import * as React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import faker from 'faker'
 import Login from '../../components/login'
+
+const buildLoginForm = () => ({
+  txtUsername: faker.internet.userName(),
+  txtPassword: faker.internet.password(),
+})
 
 test('submitting the form calls onSubmit with username and password', async () => {
   // 🐨 create a variable called "submittedData" and a handleSubmit function that
@@ -20,8 +26,7 @@ test('submitting the form calls onSubmit with username and password', async () =
   const password = screen.getByLabelText(/password/i)
   const submit = screen.getByRole('button', {name: /submit/i})
 
-  const txtUsername = 'chucknorris'
-  const txtPassword = 'i need no password'
+  const {txtUsername, txtPassword} = buildLoginForm()
 
   // 🐨 use `await userEvent.type...` to change the username and password fields to
   //    whatever you want
