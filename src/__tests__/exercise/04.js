@@ -7,9 +7,10 @@ import userEvent from '@testing-library/user-event'
 import faker from 'faker'
 import Login from '../../components/login'
 
-const buildLoginForm = () => ({
+const buildLoginForm = overrides => ({
   txtUsername: faker.internet.userName(),
   txtPassword: faker.internet.password(),
+  ...overrides,
 })
 
 test('submitting the form calls onSubmit with username and password', async () => {
@@ -27,6 +28,9 @@ test('submitting the form calls onSubmit with username and password', async () =
   const submit = screen.getByRole('button', {name: /submit/i})
 
   const {txtUsername, txtPassword} = buildLoginForm()
+  // const {txtUsername, txtPassword} = buildLoginForm({
+  //   txtUsername: 'chucknorris',
+  // })
 
   // 🐨 use `await userEvent.type...` to change the username and password fields to
   //    whatever you want
