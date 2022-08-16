@@ -58,3 +58,22 @@ test(`omitting the password results in an error`, async () => {
     `"password required"`,
   )
 })
+
+test('unknown server error displays the error message', async () => {
+  server.use(
+    rest.post(
+      'https://auth-provider.example.com/api/login',
+      async (req, res, ctx) => {
+        return res(ctx.status(500), ctx.json({message: 'something went wrong'}))
+      },
+    ),
+  )
+  render(<Login />)
+  await userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"something went wrong"`,
+  )
+})
