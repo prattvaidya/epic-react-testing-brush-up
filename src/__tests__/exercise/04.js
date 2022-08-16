@@ -4,13 +4,14 @@
 import * as React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import faker from 'faker'
+import {build, fake} from '@jackfranklin/test-data-bot'
 import Login from '../../components/login'
 
-const buildLoginForm = overrides => ({
-  txtUsername: faker.internet.userName(),
-  txtPassword: faker.internet.password(),
-  ...overrides,
+const buildLoginForm = build({
+  fields: {
+    txtUsername: fake(f => f.internet.userName()),
+    txtPassword: fake(f => f.internet.password()),
+  },
 })
 
 test('submitting the form calls onSubmit with username and password', async () => {
@@ -28,6 +29,7 @@ test('submitting the form calls onSubmit with username and password', async () =
   const submit = screen.getByRole('button', {name: /submit/i})
 
   const {txtUsername, txtPassword} = buildLoginForm()
+  console.log(txtUsername, txtPassword)
   // const {txtUsername, txtPassword} = buildLoginForm({
   //   txtUsername: 'chucknorris',
   // })
