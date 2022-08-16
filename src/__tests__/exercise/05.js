@@ -25,6 +25,26 @@ const server = setupServer(...handlers)
 beforeAll(() => server.listen())
 afterAll(() => server.close())
 
+test('unknown server error displays the error message', async () => {
+  server.use(
+    rest.post(
+      'https://auth-provider.example.com/api/login',
+      async (req, res, ctx) => {
+        return res(ctx.status(500), ctx.json({message: 'something went wrong'}))
+      },
+    ),
+  )
+  render(<Login />)
+  await userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"something went wrong"`,
+  )
+  server.resetHandlers()
+})
+
 test(`logging in displays the user's username`, async () => {
   render(<Login />)
   const {username, password} = buildLoginForm()
@@ -56,24 +76,5 @@ test(`omitting the password results in an error`, async () => {
 
   expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
     `"password required"`,
-  )
-})
-
-test('unknown server error displays the error message', async () => {
-  server.use(
-    rest.post(
-      'https://auth-provider.example.com/api/login',
-      async (req, res, ctx) => {
-        return res(ctx.status(500), ctx.json({message: 'something went wrong'}))
-      },
-    ),
-  )
-  render(<Login />)
-  await userEvent.click(screen.getByRole('button', {name: /submit/i}))
-
-  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
-
-  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
-    `"something went wrong"`,
   )
 })
