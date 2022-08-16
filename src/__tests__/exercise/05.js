@@ -27,11 +27,12 @@ afterAll(() => server.close())
 afterEach(() => server.resetHandlers())
 
 test('unknown server error displays the error message', async () => {
+  const testErrorMessage = 'something went wrong'
   server.use(
     rest.post(
       'https://auth-provider.example.com/api/login',
       async (req, res, ctx) => {
-        return res(ctx.status(500), ctx.json({message: 'something went wrong'}))
+        return res(ctx.status(500), ctx.json({message: testErrorMessage}))
       },
     ),
   )
@@ -40,9 +41,7 @@ test('unknown server error displays the error message', async () => {
 
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
 
-  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
-    `"something went wrong"`,
-  )
+  expect(screen.getByRole('alert')).toHaveTextContent(testErrorMessage)
 })
 
 test(`logging in displays the user's username`, async () => {
