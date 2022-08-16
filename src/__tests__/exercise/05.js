@@ -24,6 +24,7 @@ const server = setupServer(...handlers)
 // 🐨 after all the tests, stop the server with `server.close()`
 beforeAll(() => server.listen())
 afterAll(() => server.close())
+afterEach(() => server.resetHandlers())
 
 test('unknown server error displays the error message', async () => {
   server.use(
@@ -42,7 +43,6 @@ test('unknown server error displays the error message', async () => {
   expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
     `"something went wrong"`,
   )
-  server.resetHandlers()
 })
 
 test(`logging in displays the user's username`, async () => {
